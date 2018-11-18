@@ -1,0 +1,23 @@
+public static void GroupByExample()
+        {
+            IList<Student> allstudent = new List<Student>()
+            {
+                new Student(){Age=24,ID=1,Name="Hello" },
+                new Student(){Age=24,ID=2,Name="Rama" },
+                new Student(){Age=20,ID=3,Name="opore" },
+                 new Student(){Age=20,ID=4,Name="okla" },
+                  new Student(){Age=26,ID=5,Name="haris" }
+                  , new Student(){Age=26,ID=6,Name="demsree" }
+            };
+            var grpbyresult = from m in allstudent
+                              group m by m.Age;
+
+            foreach(var st in grpbyresult)
+            {
+                Console.WriteLine("Age Group: {0}", st.Key);
+                foreach(Student k in st)
+                {
+                    Console.WriteLine(k.Name + "  " + k.Age);
+                }
+            }
+        }
