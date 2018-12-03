@@ -21,3 +21,20 @@ public static void GroupByExample()
                 }
             }
         }
+
+------------------------------------
+
+  List<Emp> empObj = new List<Emp>()
+            {
+                new Emp{ ID="1",Name="Bibeka"},
+                new Emp{ ID="2",Name="Other"},
+                new Emp{ ID="3",Name="Temper"}
+            };
+
+            Func<Emp, string> EmpSelector = employee => "Name=" + employee.Name;
+            IEnumerable<string> ListofNames = empObj.Select(EmpSelector);
+            foreach(string s in ListofNames)
+            {
+                Console.WriteLine($"Name is {s}");
+            }
+            Console.Read();
