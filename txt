@@ -1,3 +1,175 @@
+using MongoDB.Bson;
+using MongoDB.Driver;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml.Linq;
+
+namespace ConsolePract
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            //ConsolePract.JsonTest obj = new JsonTest();
+            //obj.JsonSerilize();
+            //XElement second = new XElement("Employees", new XElement(("Employee"), 
+            //    new XElement("Name", "Bibek"), 
+            //    new XElement("Age", "30"),
+            //    new XElement("Sex", "Male")));
+            //IEnumerable<XElement> des = from el in second.Descendants()
+            //                            select el;
+
+            //foreach(XElement xm in des)
+            //{
+            //    Console.WriteLine(xm.Name);
+            //    Console.WriteLine(xm.Value);
+            //    Console.WriteLine("----------------------");
+
+
+            //}
+
+            //JsonTest obj = new JsonTest();
+            //var groupresult = from a in obj.returnAllempforGroup()
+            //                  group a by a.age;
+
+            //foreach(var age in groupresult)
+            //{
+            //    Console.WriteLine("Age Group is {0}", age.Key);
+            //    Console.WriteLine("-------------------------");
+            //    foreach(var  k in age)
+            //    {
+            //        Console.WriteLine(k.Name);
+            //    }
+            //    Console.WriteLine("-------------------------");
+
+            //}
+            //Console.Read();
+
+            
+            char ch='y';
+            while (ch!='n')
+            {
+                Console.WriteLine("Enter Y to insert");               
+                ch = Console.ReadKey().KeyChar;
+                switch (ch)
+                {
+                    case 'y':
+                        Insert();
+                        break;
+                    case 'm':
+                        MultiInsert();
+                        break;
+                    case 'v':
+                        SearchAsync();
+                        break;
+                }
+            }
+            
+        }
+        public static void Insert()
+        {
+            #region MongoRegion
+            try
+            {
+                var connectionString = "mongodb://localhost:27017";
+                var client = new MongoClient(connectionString);
+                IMongoDatabase db = client.GetDatabase("AuthorDemo");
+                Author author = new Author
+                {
+                    Id = new Random().Next(1, 100),
+                    FirstName = "Joydip" + new Random().Next(1, 100).ToString(),
+                    LastName = "Kanjilal" + new Random().Next(1, 100).ToString()
+                };
+                var collection = db.GetCollection<Author>("authors");
+                collection.InsertOne(author);
+                Console.Read();
+            }catch(Exception ex)
+            {
+                Console.WriteLine("Duplicate ID found plz try new one.."); 
+            }
+            #endregion
+        }
+        public static async Task SearchAsync()
+        {
+            //var connectionString = "mongodb://localhost:27017";
+            //var client = new MongoClient(connectionString);
+            //IMongoDatabase db = client.GetDatabase("AuthorDemo");
+
+            var connectionString = "mongodb://localhost:27017";
+            var client = new MongoClient(connectionString);
+
+            IMongoDatabase db = client.GetDatabase("AuthorDemo");
+
+            var collection = db.GetCollection<BsonDocument>("authors");
+
+            using (IAsyncCursor<BsonDocument> cursor = await collection.FindAsync(new BsonDocument()))
+            {
+                while (await cursor.MoveNextAsync())
+                {
+                    IEnumerable<BsonDocument> batch = cursor.Current;
+                    foreach (BsonDocument document in batch)
+                    {
+                        Console.WriteLine(document);
+                        Console.WriteLine();
+                    }
+                }
+            }
+
+
+           
+         
+
+
+        }
+        public static void MultiInsert()
+        {
+            var connectionString = "mongodb://localhost:27017";
+            var client = new MongoClient(connectionString);
+            IMongoDatabase db = client.GetDatabase("AuthorDemoMulti");
+            var collection = db.GetCollection<BsonDocument>("authorsMulti");
+            var author1 = new BsonDocument
+        {
+            {"id", 100},
+            {"firstname", "Joydip"},
+            {"lastname", "Kanjilal"}
+        };
+            var author2 = new BsonDocument
+        {
+            {"id", 102},
+            {"firstname", "Steve"},
+            {"lastname", "Smith"}
+        };
+            var author3 = new BsonDocument
+        {
+            {"id", 103},
+            {"firstname", "Gary"},
+            {"lastname", "Stevens"}
+        };
+            var authors = new List<BsonDocument>();
+            authors.Add(author1);
+            authors.Add(author2);
+            authors.Add(author3);
+            collection.InsertMany(authors);
+            Console.Read();
+        }
+    }
+
+    public class Author
+    {
+        public int Id { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+    }
+   
+}
+
+
+
+
+
 public static void GroupByExample()
         {
             IList<Student> allstudent = new List<Student>()
