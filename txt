@@ -13,6 +13,31 @@ namespace ConsolePract
     {
         static void Main(string[] args)
         {
+        
+         zipfile
+         
+          protected void DownloadFiles(object sender, EventArgs e)
+        {
+            using (ZipFile zip = new ZipFile())
+            {
+                zip.AlternateEncodingUsage = ZipOption.AsNecessary;
+                zip.AddDirectoryByName("configFiles");
+                
+                zip.AddFile(Server.MapPath(@"TempConfigs\one.jpg"), "Files");
+                zip.AddFile(Server.MapPath(@"TempConfigs\two.jpg"), "Files");
+
+                Response.Clear();
+                Response.BufferOutput = false;
+                string zipName = String.Format("config_Zip_{0}.zip", DateTime.Now.ToString("yyyy-MMM-dd-HHmmss"));
+                Response.ContentType = "application/zip";
+                Response.AddHeader("content-disposition", "attachment; filename=" + zipName);
+                zip.Save(Response.OutputStream);
+                Response.End();
+            }
+        }
+        
+        
+        
             //ConsolePract.JsonTest obj = new JsonTest();
             //obj.JsonSerilize();
             //XElement second = new XElement("Employees", new XElement(("Employee"), 
